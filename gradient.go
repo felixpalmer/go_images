@@ -4,21 +4,21 @@ import (
 	"image"
 	"image/color"
 	"image/png"
-  "log"
+	"log"
 	"os"
 )
 
 func main() {
 	width, height := 128, 128
 	m := image.NewRGBA(image.Rect(0, 0, width, height))
-  draw_gradient(*m)
-  out_filename := "gradient.png"
+	draw_gradient(*m)
+	out_filename := "gradient.png"
 	out_file, err := os.Create(out_filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer out_file.Close()
-  log.Print("Saving image to: ", out_filename)
+	log.Print("Saving image to: ", out_filename)
 	png.Encode(out_file, m)
 }
 
