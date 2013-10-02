@@ -11,18 +11,18 @@ import (
 func main() {
 	width, height := 128, 128
 	m := image.NewRGBA(image.Rect(0, 0, width, height))
-	draw_gradient(*m)
-	out_filename := "gradient.png"
-	out_file, err := os.Create(out_filename)
+	drawGradient(*m)
+	outFilename := "gradient.png"
+	outFile, err := os.Create(outFilename)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer out_file.Close()
-	log.Print("Saving image to: ", out_filename)
-	png.Encode(out_file, m)
+	defer outFile.Close()
+	log.Print("Saving image to: ", outFilename)
+	png.Encode(outFile, m)
 }
 
-func draw_gradient(m image.RGBA) {
+func drawGradient(m image.RGBA) {
 	size := m.Bounds().Size()
 	for x := 0; x < size.X; x++ {
 		for y := 0; y < size.Y; y++ {
