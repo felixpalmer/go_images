@@ -22,6 +22,14 @@ func (v *Vector) Add(v2 Vector) Vector {
 	return Vector{v.X + v2.X, v.Y + v2.Y}
 }
 
+func (v *Vector) Sub(v2 Vector) Vector {
+	return Vector{v.X - v2.X, v.Y - v2.Y}
+}
+
+func (v *Vector) Length() float64 {
+	return math.Hypot(v.X, v.Y)
+}
+
 func (v *Vector) toPoint() image.Point {
 	return image.Point{int(v.X), int(v.Y)}
 }
