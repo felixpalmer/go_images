@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	width, height := 128, 128
+	width, height := 512, 512
 	canvas := NewCanvas(image.Rect(0, 0, width, height))
 	canvas.DrawGradient()
 
