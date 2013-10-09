@@ -15,9 +15,9 @@ func main() {
 
   // Draw a series of lines from the top left corner to the bottom of the image
 	for x := 0; x < width; x += 8 {
-	  draw_line(*canvas,
-	            color.RGBA{0, 0, 0, 255},
-	            Vector{0.0, 0.0}, Vector{float64(x), float64(height)})
+	  canvas.DrawLine(color.RGBA{0, 0, 0, 255},
+                    Vector{0.0, 0.0},
+                    Vector{float64(x), float64(height)})
   }
 
 	outFilename := "lines.png"
@@ -54,8 +54,7 @@ func (c Canvas) DrawGradient() {
 	}
 }
 
-func draw_line(m Canvas, color color.RGBA, from Vector, to Vector) {
-	// Get the number of pixels we'll need to draw
+func (c Canvas) DrawLine(color color.RGBA, from Vector, to Vector) {
 	delta := to.Sub(from)
 	length := delta.Length()
 	x_step, y_step := delta.X/length, delta.Y/length
@@ -63,9 +62,7 @@ func draw_line(m Canvas, color color.RGBA, from Vector, to Vector) {
 	for i := 0; i < limit; i++ {
 		x := from.X + float64(i)*x_step
 		y := from.Y + float64(i)*y_step
-
-		// Alias for now
-		m.Set(int(x), int(y), color)
+		c.Set(int(x), int(y), color)
 	}
 }
 
