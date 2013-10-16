@@ -5,9 +5,9 @@ import (
 	"image/color"
 	"image/png"
 	"log"
-  "math/rand"
+	"math/rand"
 	"os"
-  "time"
+	"time"
 )
 
 func main() {
@@ -15,20 +15,20 @@ func main() {
 	canvas := NewCanvas(image.Rect(0, 0, width, height))
 	//canvas.DrawGradient()
 
-  // Draw a set of spirals randomly over the image
+	// Draw a set of spirals randomly over the image
 	rand.Seed(time.Now().UTC().UnixNano())
 	for i := 0; i < 1; i++ {
-    x := 10.0
-    y := 60.0
-    color := color.RGBA{55,
-				                60,
-                        200,
-                        255}
-			                
-		canvas.DrawSpiral(color, Vector{x, y})
-  }
+		x := 10.0
+		y := 60.0
+		color := color.RGBA{55,
+			60,
+			200,
+			255}
 
-  canvas.Blur(2, new(WeightFunctionBox))
+		canvas.DrawSpiral(color, Vector{x, y})
+	}
+
+	canvas.Blur(6, new(WeightFunctionMotion))
 	outFilename := "blur.png"
 	outFile, err := os.Create(outFilename)
 	if err != nil {

@@ -1,8 +1,8 @@
 package main
 
 import (
-  "image"
-  "math"
+	"image"
+	"math"
 )
 
 type Vector struct {

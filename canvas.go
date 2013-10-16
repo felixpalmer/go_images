@@ -3,7 +3,7 @@ package main
 import (
 	"image"
 	"image/color"
-  "math"
+	"math"
 )
 
 type Canvas struct {
@@ -17,9 +17,9 @@ func NewCanvas(r image.Rectangle) *Canvas {
 }
 
 func (c Canvas) Clone() *Canvas {
-  clone := NewCanvas(c.Bounds())
-  copy(clone.Pix, c.Pix)
-  return clone
+	clone := NewCanvas(c.Bounds())
+	copy(clone.Pix, c.Pix)
+	return clone
 }
 
 func (c Canvas) DrawGradient() {
@@ -61,56 +61,69 @@ func (c Canvas) DrawSpiral(color color.RGBA, from Vector) {
 }
 
 func (c Canvas) Blur(radius int, weight WeightFunction) {
-  clone := c.Clone()
+	clone := c.Clone()
 	size := c.Bounds().Size()
 	for x := 0; x < size.X; x++ {
 		for y := 0; y < size.Y; y++ {
 			color := c.BlurPixel(x, y, radius, weight)
 			clone.Set(x, y, color)
-    }
-  }
-  copy(c.Pix, clone.Pix)
+		}
+	}
+	copy(c.Pix, clone.Pix)
 }
 
 func (c Canvas) BlurPixel(x int, y int, radius int, weight WeightFunction) color.Color {
-  weightSum := float64(0)
+	weightSum := float64(0)
 	size := c.Bounds().Size()
-  outR, outG, outB := float64(0), float64(0), float64(0)
-  for i := x - radius; i < x + radius + 1; i++ {
-    if i < 0 || i > size.X {
-      continue
-    }
-    for j := y - radius; j < y + radius + 1; j++ {
-      if j < 0 || j > size.Y {
-        continue
-      }
-      weight := weight.Weight(i - x, j - y)
-      r, g, b, _ := c.At(i, j).RGBA()
-      outR += float64(r) * weight
-      outG += float64(g) * weight
-      outB += float64(b) * weight
-      weightSum += weight
-    }
-  }
-  return color.RGBA{
-    uint8(outR / (weightSum * 0xFF)),
-    uint8(outG / (weightSum * 0xFF)),
-    uint8(outB / (weightSum * 0xFF)),
-    255}
+	outR, outG, outB := float64(0), float64(0), float64(0)
+	for i := x - radius; i < x+radius+1; i++ {
+		if i < 0 || i > size.X {
+			continue
+		}
+		for j := y - radius; j < y+radius+1; j++ {
+			if j < 0 || j > size.Y {
+				continue
+			}
+			weight := weight.Weight(i-x, j-y)
+			r, g, b, _ := c.At(i, j).RGBA()
+			outR += float64(r) * weight
+			outG += float64(g) * weight
+			outB += float64(b) * weight
+			weightSum += weight
+		}
+	}
+	return color.RGBA{
+		uint8(outR / (weightSum * 0xFF)),
+		uint8(outG / (weightSum * 0xFF)),
+		uint8(outB / (weightSum * 0xFF)),
+		255}
 }
 
 // Blur weighting functions
 type WeightFunction interface {
-  Weight(x int, y int) float64
+	Weight(x int, y int) float64
 }
 
-type WeightFunctionBox struct {}
-func (w WeightFunctionBox) Weight(x int, y int) float64 {
-  return 1.0
-}
+type WeightFunctionBox struct{}
 
-type WeightFunctionDist struct {}
+func (w WeightFunctionBox) Weight(x int, y int) float64 { return 1.0 }
+
+type WeightFunctionDist struct{}
+
 func (w WeightFunctionDist) Weight(x int, y int) float64 {
-  return math.Hypot(float64(x), float64(y))
+	d := math.Hypot(float64(x), float64(y))
+	return 1 / (1 + d)
 }
 
+type WeightFunctionMotion struct {
+}
+
+func (w WeightFunctionMotion) Weight(x int, y int) float64 {
+	if y != 0 {
+		return 0
+	}
+	if x < 0 {
+		return 0
+	}
+	return 1 / (1 + float64(x))
+}
