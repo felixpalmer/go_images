@@ -28,7 +28,7 @@ func main() {
 		canvas.DrawSpiral(color, Vector{x, y})
   }
 
-  canvas.Blur(2)
+  canvas.Blur(2, new(WeightFunctionBox))
 	outFilename := "blur.png"
 	outFile, err := os.Create(outFilename)
 	if err != nil {
