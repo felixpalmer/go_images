@@ -15,6 +15,12 @@ func NewCanvas(r image.Rectangle) *Canvas {
 	return canvas
 }
 
+func (c Canvas) Clone() *Canvas {
+  clone := NewCanvas(c.Bounds())
+  copy(clone.Pix, c.Pix)
+  return clone
+}
+
 func (c Canvas) DrawGradient() {
 	size := c.Bounds().Size()
 	for x := 0; x < size.X; x++ {
