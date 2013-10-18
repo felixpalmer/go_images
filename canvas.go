@@ -92,6 +92,8 @@ func (c Canvas) BlurPixel(x int, y int, radius int, weight WeightFunction) color
 			weightSum += weight
 		}
 	}
+	// Need to divide by 0xFF as the RGBA() function returns color values as uint32
+	// and we need uint8
 	return color.RGBA{
 		uint8(outR / (weightSum * 0xFF)),
 		uint8(outG / (weightSum * 0xFF)),

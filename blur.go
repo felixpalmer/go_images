@@ -2,39 +2,38 @@ package main
 
 import (
 	"image"
-	"image/color"
-	"image/png"
+	"image/draw"
+	"image/jpeg"
 	"log"
-	"math/rand"
 	"os"
-	"time"
 )
 
 func main() {
-	width, height := 128, 128
-	canvas := NewCanvas(image.Rect(0, 0, width, height))
-	//canvas.DrawGradient()
+	// Load in the image file
+	inFilename := "sweet_goat.jpeg"
+	file, err := os.Open(inFilename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
 
-	// Draw a set of spirals randomly over the image
-	rand.Seed(time.Now().UTC().UnixNano())
-	for i := 0; i < 1; i++ {
-		x := 10.0
-		y := 60.0
-		color := color.RGBA{55,
-			60,
-			200,
-			255}
-
-		canvas.DrawSpiral(color, Vector{x, y})
+	// Decode the image.
+	m, _, err := image.Decode(file)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	canvas.Blur(6, new(WeightFunctionMotion))
-	outFilename := "blur.png"
+	// Create a canvas from the image
+	canvas := NewCanvas(m.Bounds())
+	draw.Draw(canvas, m.Bounds(), m, image.ZP, draw.Src)
+
+	canvas.Blur(15, new(WeightFunctionBox))
+	outFilename := "blur.jpeg"
 	outFile, err := os.Create(outFilename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer outFile.Close()
 	log.Print("Saving image to: ", outFilename)
-	png.Encode(outFile, canvas)
+	jpeg.Encode(outFile, canvas, nil)
 }
