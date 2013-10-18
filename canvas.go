@@ -127,5 +127,17 @@ func (w WeightFunctionMotion) Weight(x int, y int) float64 {
 	if x < 0 {
 		return 0
 	}
-	return 1 / (1 + float64(x))
+	return 0.3 + 0.7/math.Sqrt(1+float64(x))
+}
+
+type WeightFunctionDouble struct {
+	split int
+}
+
+func (w WeightFunctionDouble) Weight(x int, y int) float64 {
+	if y == 0 && (x == w.split || x == -w.split) {
+		return 1.0
+	} else {
+		return 0
+	}
 }
