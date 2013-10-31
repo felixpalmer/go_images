@@ -14,7 +14,7 @@ import (
 func main() {
 	width, height := 640, 640
 	canvas := NewCanvas(image.Rect(0, 0, width, height))
-  canvas.DrawRect(color.RGBA{0, 0, 0, 255}, Vector{0, 0}, Vector{float64(width), float64(height)})
+	canvas.DrawRect(color.RGBA{0, 0, 0, 255}, Vector{0, 0}, Vector{float64(width), float64(height)})
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	// Create and populate the slice of Nodes
@@ -32,8 +32,8 @@ func main() {
 	//   }
 	// }
 
-  // Calculate nearest peers for each node
-  // This is pretty ineffecient for large n
+	// Calculate nearest peers for each node
+	// This is pretty ineffecient for large n
 	nodesCopy := make([]*Node, n)
 	copy(nodesCopy, nodes)
 	log.Print("Sorting nodes...")
@@ -45,9 +45,9 @@ func main() {
 	}
 	log.Print("Nodes sorted")
 
-  // Draw on circles representing nodes
+	// Draw on circles representing nodes
 	for _, node := range nodes {
-    canvas.DrawCircle(color.RGBA{22, 131, 201, 255}, node.Position, 5)
+		canvas.DrawCircle(color.RGBA{22, 131, 201, 255}, node.Position, 5)
 	}
 	canvas.Blur(3, new(WeightFunctionDist))
 
