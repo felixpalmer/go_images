@@ -18,8 +18,8 @@ func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	// Create and populate the slice of Nodes
-	n := 500
-	peers := 10
+	n := 50
+	peers := 6
 	nodes := make([]*Node, n)
 	for i := 0; i < n; i++ {
 		nodes[i] = NewNode(peers, canvas)
@@ -59,9 +59,9 @@ func main() {
 	}
 
 	// Start sending messages between nodes
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 1; i++ {
 		nodes[i].Power = 255
-		nodes[i].Ch <- nodes[i].Peers[0]
+		go nodes[i].Send()
 	}
 	time.Sleep(time.Second)
 
