@@ -12,12 +12,13 @@ import (
 )
 
 func main() {
-	width, height := 1024, 1024
+	width, height := 640, 640
 	canvas := NewCanvas(image.Rect(0, 0, width, height))
+  canvas.DrawRect(color.RGBA{0, 0, 0, 255}, Vector{0, 0}, Vector{float64(width), float64(height)})
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	// Create and populate the slice of Nodes
-	n := 5000
+	n := 500
 	peers := 10
 	nodes := make([]*Node, n)
 	for i := 0; i < n; i++ {
@@ -31,6 +32,8 @@ func main() {
 	//   }
 	// }
 
+  // Calculate nearest peers for each node
+  // This is pretty ineffecient for large n
 	nodesCopy := make([]*Node, n)
 	copy(nodesCopy, nodes)
 	log.Print("Sorting nodes...")
@@ -42,6 +45,12 @@ func main() {
 	}
 	log.Print("Nodes sorted")
 
+  // Draw on circles representing nodes
+	for _, node := range nodes {
+    canvas.DrawCircle(color.RGBA{22, 131, 201, 255}, node.Position, 5)
+	}
+	canvas.Blur(3, new(WeightFunctionDist))
+
 	// Draw connections between nodes
 	for _, node := range nodes {
 		for _, peer := range node.Peers[:3] {
@@ -50,7 +59,7 @@ func main() {
 	}
 
 	// Start sending messages between nodes
-	for i := 0; i < 500; i++ {
+	for i := 0; i < 5; i++ {
 		nodes[i].Power = 255
 		nodes[i].Ch <- nodes[i].Peers[0]
 	}

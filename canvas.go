@@ -48,6 +48,24 @@ func (c Canvas) DrawLine(color color.RGBA, from Vector, to Vector) {
 	}
 }
 
+func (c Canvas) DrawCircle(color color.RGBA, at Vector, radius int) {
+	for x := -radius; x <= radius; x++ {
+		for y := -radius; y <= radius; y++ {
+      if (x*x + y*y <= radius*radius) {
+        c.Set(int(at.X) + x, int(at.Y) + y, color)
+      }
+    }
+  }
+}
+
+func (c Canvas) DrawRect(color color.RGBA, min Vector, max Vector) {
+	for x := int(min.X); x <= int(max.X); x++ {
+		for y := int(min.Y); y <= int(max.Y); y++ {
+      c.Set(x, y, color)
+    }
+  }
+}
+
 func (c Canvas) DrawSpiral(color color.RGBA, from Vector) {
 	dir := Vector{0, 2}
 	last := from
