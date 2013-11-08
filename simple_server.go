@@ -8,7 +8,12 @@ import (
 )
 
 func HelloHandler(writer http.ResponseWriter, request *http.Request) {
-  io.WriteString(writer, "hello!")
+	vars := mux.Vars(request)
+  if vars["name"] != "" {
+    io.WriteString(writer, "hello " + vars["name"] + "!")
+  } else {
+    io.WriteString(writer, "hello!")
+  }
 }
 
 func NoCacheDecorator(h http.Handler) http.Handler {
@@ -23,6 +28,7 @@ func NoCacheDecorator(h http.Handler) http.Handler {
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/hello", HelloHandler)
+	router.HandleFunc("/hello/{name}", HelloHandler)
   staticHandler := http.StripPrefix("/", http.FileServer(http.Dir(".")))
   staticHandler = NoCacheDecorator(staticHandler)
 	router.PathPrefix("/").Handler(staticHandler)
