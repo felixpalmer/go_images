@@ -4,9 +4,13 @@
 <script language="javascript" type="text/javascript">
 
   var wsUri = "ws://localhost:1234/ws";
+  var ctx;
 
   function wsConnect()
   {
+    var canvas = document.getElementById("canvas");
+    ctx = canvas.getContext('2d');
+
     ws = new WebSocket( wsUri );
     ws.onopen = function( e ) {
       console.log( "CONNECTED" );
@@ -16,7 +20,15 @@
       console.log( "DISCONNECTED" );
     };
     ws.onmessage = function( e ) {
-      console.log( e.data );
+      var data = e.data.split("\n");
+      for ( var line in data ) {
+        var msg = data[line].split(" ");
+        var x = parseInt(msg[1]);
+        var y = parseInt(msg[2]);
+        var color = msg[3];
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, 1, 1);
+      }
     };
     ws.onerror = function( e ) {
       console.log( 'WS Error: ' + e.data );
@@ -29,7 +41,7 @@
 
 <body>
     <h2>Websocket Canvas</h2>
-    <canvas id="example" width="512" height="512">
+    <canvas id="canvas" width="512" height="512">
         Sorry, your browser does not support Canvas
     </canvas>
 </body>
