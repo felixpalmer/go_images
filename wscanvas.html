@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Websocket Canvas</title>
+<script language="javascript" type="text/javascript">
+
+  var wsUri = "ws://localhost:1234/ws";
+
+  function wsConnect()
+  {
+    ws = new WebSocket( wsUri );
+    ws.onopen = function( e ) {
+      console.log( "CONNECTED" );
+      ws.send( "READY" );
+    };
+    ws.onclose = function( e ) { 
+      console.log( "DISCONNECTED" );
+    };
+    ws.onmessage = function( e ) {
+      console.log( e.data );
+    };
+    ws.onerror = function( e ) {
+      console.log( 'WS Error: ' + e.data );
+    };
+  }
+
+  window.addEventListener("load", wsConnect, false);
+
+</script>
+
+<body>
+    <h2>Websocket Canvas</h2>
+    <canvas id="example" width="512" height="512">
+        Sorry, your browser does not support Canvas
+    </canvas>
+</body>
+</html> 
