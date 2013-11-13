@@ -8,8 +8,8 @@
 
   function wsConnect()
   {
-    var canvas = document.getElementById("canvas");
-    ctx = canvas.getContext('2d');
+    var canvas = document.getElementById( "canvas" );
+    ctx = canvas.getContext( '2d' );
 
     ws = new WebSocket( wsUri );
     ws.onopen = function( e ) {
@@ -21,13 +21,14 @@
     };
     ws.onmessage = function( e ) {
       var data = e.data.split("\n");
+      ctx.clearRect( 0, 0, 512, 512 );
       for ( var line in data ) {
         var msg = data[line].split(" ");
         var x = parseInt(msg[1]);
         var y = parseInt(msg[2]);
         var color = msg[3];
         ctx.fillStyle = color;
-        ctx.fillRect(x, y, 1, 1);
+        ctx.fillRect( x, y, 1, 1 );
       }
     };
     ws.onerror = function( e ) {
@@ -35,7 +36,7 @@
     };
   }
 
-  window.addEventListener("load", wsConnect, false);
+  window.addEventListener( "load", wsConnect, false );
 
 </script>
 
