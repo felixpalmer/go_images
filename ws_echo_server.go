@@ -4,12 +4,12 @@ import (
 	"io"
 	"net/http"
 
-  "code.google.com/p/go.net/websocket"
+	"code.google.com/p/go.net/websocket"
 	"github.com/gorilla/mux"
 )
 
 func WebsocketHandler(ws *websocket.Conn) {
-  io.Copy(ws, ws)
+	io.Copy(ws, ws)
 }
 
 func main() {
