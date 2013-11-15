@@ -30,7 +30,7 @@ func GradientHandler(ws *websocket.Conn) {
 }
 
 func GraphHandler(ws *websocket.Conn) {
-	width, height := 200, 200
+	width, height := 512, 512
   t := 0.0
   for {
     msg := "CLEAR\n"
@@ -46,8 +46,13 @@ func GraphHandler(ws *websocket.Conn) {
   }
 }
 
+func HelloHandler(ws *websocket.Conn) {
+  io.WriteString(ws, "HELLO")
+}
+
 func main() {
 	router := mux.NewRouter()
+	//router.Handle("/ws", websocket.Handler(GradientHandler))
 	router.Handle("/ws", websocket.Handler(GraphHandler))
 	staticHandler := http.FileServer(http.Dir("."))
 	router.PathPrefix("/").Handler(staticHandler)
