@@ -21,14 +21,20 @@
     };
     ws.onmessage = function( e ) {
       var data = e.data.split("\n");
-      ctx.clearRect( 0, 0, 512, 512 );
       for ( var line in data ) {
         var msg = data[line].split(" ");
-        var x = parseInt(msg[1]);
-        var y = parseInt(msg[2]);
-        var color = msg[3];
-        ctx.fillStyle = color;
-        ctx.fillRect( x, y, 1, 1 );
+        var cmd = msg[0];
+        if ( cmd == "CLEAR" ) {
+          ctx.clearRect( 0, 0, 512, 512 );
+        } else if ( cmd == "PIXEL" ) {
+          var x = parseInt(msg[1]);
+          var y = parseInt(msg[2]);
+          var color = msg[3];
+          ctx.fillStyle = color;
+          ctx.fillRect( x, y, 1, 1 );
+        } else {
+          console.log( "Unknown command: " + cmd );
+        }
       }
     };
     ws.onerror = function( e ) {

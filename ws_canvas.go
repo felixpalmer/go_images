@@ -12,19 +12,33 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func WebsocketHandler(ws *websocket.Conn) {
+func GradientHandler(ws *websocket.Conn) {
 	width, height := 200, 200
 	canvas := NewCanvas(image.Rect(0, 0, width, height))
 	canvas.DrawGradient()
+  // Warning, slow for large canvases!
+  // This is definitely not an efficient way to send an image!
+  for x := 0; x < width; x++ {
+    for y := 0; y < height; y++ {
+      r, g, b, _ := canvas.At(x, y).RGBA()
+      color := fmt.Sprintf("#%02x%02x%02x", r/0xFF, g/0xFF, b/0xFF)
+      msg := fmt.Sprintf("PIXEL %d %d %s\n", x, y, color)
+      io.WriteString(ws, msg)
+    }
+    time.Sleep(time.Second / 30.0)
+  }
+}
+
+func GraphHandler(ws *websocket.Conn) {
+	width, height := 200, 200
   t := 0.0
   for {
-    msg := ""
+    msg := "CLEAR\n"
     for x := 0; x < width; x++ {
       y := height/2 + int(50 * math.Sin(t/10) * math.Sin(float64(x)/10.0 + t))
-      //r, g, b, _ := canvas.At(x, y).RGBA()
-      //color := fmt.Sprintf("#%02x%02x%02x", r/0xFF, g/0xFF, b/0xFF)
-      color := "#ff0000"
-      msg += fmt.Sprintf("PIXEL %d %d %s\n", x, y, color)
+      y2 := height/3 + int(60 * math.Sin(t/9) * math.Sin(float64(x)/20.0 + 2.0 * t))
+      msg += fmt.Sprintf("PIXEL %d %d %s\n", x, y, "#ff0000")
+      msg += fmt.Sprintf("PIXEL %d %d %s\n", x, y2, "#00ff00")
     }
     t += 0.3
     io.WriteString(ws, msg)
@@ -34,7 +48,7 @@ func WebsocketHandler(ws *websocket.Conn) {
 
 func main() {
 	router := mux.NewRouter()
-	router.Handle("/ws", websocket.Handler(WebsocketHandler))
+	router.Handle("/ws", websocket.Handler(GraphHandler))
 	staticHandler := http.FileServer(http.Dir("."))
 	router.PathPrefix("/").Handler(staticHandler)
 	http.ListenAndServe("localhost:1234", router)
