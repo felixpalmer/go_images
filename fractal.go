@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"image/png"
 	"log"
+  "math"
 	"math/cmplx"
 	"os"
 )
@@ -24,24 +25,41 @@ func mandelbrot(c complex128, iter int) float64 {
 	z := complex(0, 0)
 	for i := 0; i < iter; i++ {
 		z = z*z + c
+    if cmplx.Abs(z) > 1000 {
+      return 1000
+    }
 	}
 	return cmplx.Abs(z)
+}
+
+// Creates a function for converting a magnitude into a color
+// based on a gradient image file
+func createColorizer(filename string) func(float64) color.Color {
+  gradient := CanvasFromFile(filename)
+  limit := gradient.Bounds().Size().Y - 1
+  return func(mag float64) color.Color {
+    // Clamp magnitude to size of gradient
+    m := int(math.Max(math.Min(300*mag, float64(limit)), 1))
+    return gradient.At(0, m)
+  }
 }
 
 func main() {
 	width, height := 800, 600
 	canvas := NewCanvas(image.Rect(0, 0, width, height))
+  colorizer := createColorizer("fractalGradients/gradient3.png")
 
-  zoom := 250.0
-  center := complex(-0.6, 0)
+  zoom := 22400.0
+  center := complex(-0.55, 0.6)
 	for x := 0; x < width; x++ {
 		for y := 0; y < width; y++ {
       c := toCmplx(x - width / 2, y - height / 2, zoom, center)
-      mag := mandelbrot(c, 10)
-			color := color.RGBA{uint8(mag), 0, 0, 255}
+      mag := mandelbrot(c, 50)
+			color := colorizer(mag)
 			canvas.Set(x, y, color)
 		}
 	}
+
 
 	outFilename := "fractal.png"
 	outFile, err := os.Create(outFilename)

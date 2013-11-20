@@ -3,7 +3,10 @@ package main
 import (
 	"image"
 	"image/color"
+	"image/draw"
+  "log"
 	"math"
+  "os"
 )
 
 type Canvas struct {
@@ -20,6 +23,23 @@ func (c Canvas) Clone() *Canvas {
 	clone := NewCanvas(c.Bounds())
 	copy(clone.Pix, c.Pix)
 	return clone
+}
+
+func CanvasFromFile(filename string) *Canvas {
+	file, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	m, _, err := image.Decode(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	canvas := NewCanvas(m.Bounds())
+	draw.Draw(canvas, m.Bounds(), m, image.ZP, draw.Src)
+  return canvas
 }
 
 func (c Canvas) DrawGradient() {
