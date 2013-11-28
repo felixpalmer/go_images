@@ -5,6 +5,7 @@ import (
   "image"
 	"net/http"
   "io"
+  "strings"
 
 	"code.google.com/p/go.net/websocket"
 	"github.com/gorilla/mux"
@@ -24,11 +25,21 @@ func UIHandler(ws *websocket.Conn) {
       fmt.Println(err)
       break
     }
-    fmt.Println(msg)
+
+    // Parse message
+    fields := strings.Fields(msg)
+    cmd := fields[0]
+    if cmd == "ZOOMIN" {
+      zoom *= 2.0
+    } else if cmd == "ZOOMOUT" {
+      zoom /= 2.0
+    } else {
+      fmt.Println("Unknown command:", cmd)
+    }
 
     // Create fractal and convert to base64
     drawInvMandelbrot(canvas, zoom, center, colorizer)
-    drawMsg := fmt.Sprintf("DRAW %s\n", canvas.ToBase64())
+    drawMsg := fmt.Sprintf("DRAW %s", canvas.ToBase64())
     io.WriteString(ws, drawMsg)
   }
 }

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8" />
-<title>Websocket Canvas</title>
+<title>Fractal Explorer</title>
 <script language="javascript" type="text/javascript">
 
   var wsUri = "ws://localhost:1234/ws";
@@ -45,6 +45,16 @@
     ws.onerror = function( e ) {
       console.log( 'WS Error: ' + e.data );
     };
+
+    // Handle input
+    var zoomInBtn = document.getElementById( "zoomin" );
+    var zoomOutBtn = document.getElementById( "zoomout" );
+    zoomInBtn.addEventListener( "click", function() {
+      ws.send( "ZOOMIN" );
+    });
+    zoomOutBtn.addEventListener( "click", function() {
+      ws.send( "ZOOMOUT" );
+    });
   }
 
   window.addEventListener( "load", wsConnect, false );
@@ -52,9 +62,12 @@
 </script>
 
 <body>
-    <h2>Websocket Canvas</h2>
+    <h2>Fractal Explorer</h2>
     <canvas id="canvas" width="512" height="512">
         Sorry, your browser does not support Canvas
     </canvas>
+    <hr>
+    <button id="zoomin">Zoom in</button>
+    <button id="zoomout">Zoom out</button>
 </body>
 </html> 
