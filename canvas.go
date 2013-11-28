@@ -1,9 +1,12 @@
 package main
 
 import (
+  "bytes"
+  "encoding/base64"
 	"image"
 	"image/color"
 	"image/draw"
+	"image/png"
   "log"
 	"math"
   "os"
@@ -40,6 +43,14 @@ func CanvasFromFile(filename string) *Canvas {
 	canvas := NewCanvas(m.Bounds())
 	draw.Draw(canvas, m.Bounds(), m, image.ZP, draw.Src)
   return canvas
+}
+
+func (c *Canvas) ToBase64() string {
+  imgBuf := new(bytes.Buffer)
+  imgEncoder := base64.NewEncoder(base64.StdEncoding, imgBuf)
+  png.Encode(imgEncoder, c)
+  imgEncoder.Close()
+  return imgBuf.String()
 }
 
 func (c Canvas) DrawGradient() {
