@@ -55,6 +55,9 @@
     zoomOutBtn.addEventListener( "click", function() {
       ws.send( "ZOOMOUT" );
     });
+    canvas.addEventListener( "mousedown", function(e) {
+      ws.send( "MOUSEDOWN " + e.offsetX + " " + e.offsetY );
+    });
   }
 
   window.addEventListener( "load", wsConnect, false );

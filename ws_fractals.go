@@ -5,6 +5,7 @@ import (
   "image"
 	"net/http"
   "io"
+  "strconv"
   "strings"
 
 	"code.google.com/p/go.net/websocket"
@@ -12,7 +13,7 @@ import (
 )
 
 func UIHandler(ws *websocket.Conn) {
-	width, height := 800, 600
+	width, height := 512, 512
 	canvas := NewCanvas(image.Rect(0, 0, width, height))
 	zoom := 1600.0
 	center := complex(-0.71, -0.25)
@@ -20,11 +21,7 @@ func UIHandler(ws *websocket.Conn) {
 
 	for {
     var msg string
-    err := websocket.Message.Receive(ws, &msg)
-    if err != nil {
-      fmt.Println(err)
-      break
-    }
+    websocket.Message.Receive(ws, &msg)
 
     // Parse message
     fields := strings.Fields(msg)
@@ -33,6 +30,10 @@ func UIHandler(ws *websocket.Conn) {
       zoom *= 2.0
     } else if cmd == "ZOOMOUT" {
       zoom /= 2.0
+    } else if cmd == "MOUSEDOWN" {
+      x, _ := strconv.ParseInt(fields[1], 10, 0)
+      y, _ := strconv.ParseInt(fields[2], 10, 0)
+      center = toCmplx(int(x)-width/2, int(y)-height/2, zoom, center)
     } else {
       fmt.Println("Unknown command:", cmd)
     }
