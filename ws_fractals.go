@@ -34,8 +34,11 @@ func UIHandler(ws *websocket.Conn) {
       x, _ := strconv.ParseInt(fields[1], 10, 0)
       y, _ := strconv.ParseInt(fields[2], 10, 0)
       center = toCmplx(int(x)-width/2, int(y)-height/2, zoom, center)
+    } else if cmd == "SETGRADIENT" {
+      colorizer = createColorizer(fields[1])
     } else {
       fmt.Println("Unknown command:", cmd)
+      fmt.Println("Message:", msg)
     }
 
     // Create fractal and convert to base64
