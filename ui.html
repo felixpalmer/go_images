@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Fractal Explorer</title>
+<script language="javascript" type="text/javascript">
+
+  var wsUri = "ws://localhost:1234/ws";
+  var ctx;
+
+  function wsConnect()
+  {
+    var canvas = document.getElementById( "canvas" );
+    ctx = canvas.getContext( '2d' );
+
+    ws = new WebSocket( wsUri );
+    ws.onopen = function( e ) {
+      console.log( "CONNECTED" );
+      ws.send( "READY" );
+    };
+    ws.onclose = function( e ) { 
+      console.log( "DISCONNECTED" );
+    };
+    ws.onmessage = function( e ) {
+      var data = e.data.split("\n");
+      for ( var line in data ) {
+        var msg = data[line].split(" ");
+        var cmd = msg[0];
+        if ( cmd == "CLEAR" ) {
+          ctx.clearRect( 0, 0, 512, 512 );
+        } else if ( cmd == "PIXEL" ) {
+          var x = parseInt(msg[1]);
+          var y = parseInt(msg[2]);
+          var color = msg[3];
+          ctx.fillStyle = color;
+          ctx.fillRect( x, y, 1, 1 );
+        } else if ( cmd == "DRAW" ) {
+          var imgData = msg[1];
+          var img = new Image();
+          img.src = "data:image/png;base64," + imgData;
+          ctx.drawImage( img, 0, 0 );
+        } else {
+          console.log( "Unknown command: " + cmd );
+        }
+      }
+    };
+    ws.onerror = function( e ) {
+      console.log( 'WS Error: ' + e.data );
+    };
+
+    // Handle input
+    var zoomInBtn = document.getElementById( "zoomin" );
+    zoomInBtn.addEventListener( "click", function() {
+      ws.send( "ZOOMIN" );
+    });
+    var zoomOutBtn = document.getElementById( "zoomout" );
+    zoomOutBtn.addEventListener( "click", function() {
+      ws.send( "ZOOMOUT" );
+    });
+    canvas.addEventListener( "mousedown", function(e) {
+      ws.send( "MOUSEDOWN " + e.offsetX + " " + e.offsetY );
+    });
+    var gradient1 = document.getElementById( "gradient1" );
+    gradient1.addEventListener( "click", function() {
+      ws.send( "SETGRADIENT fractalGradients/gradient1.png" );
+    });
+    var gradient2 = document.getElementById( "gradient2" );
+    gradient2.addEventListener( "click", function() {
+      ws.send( "SETGRADIENT fractalGradients/gradient2.png" );
+    });
+    var gradient3 = document.getElementById( "gradient3" );
+    gradient3.addEventListener( "click", function() {
+      ws.send( "SETGRADIENT fractalGradients/gradient3.png" );
+    });
+  }
+
+  window.addEventListener( "load", wsConnect, false );
+
+</script>
+
+<body>
+    <h2>Fractal Explorer</h2>
+    <ul>
+        <li>Click on fractal to center that point</li>
+        <li>Use buttons to zoom in and out</li>
+        <li>Change gradient by clicking on gradient</li>
+    </ul>
+    <canvas id="canvas" width="512" height="512">
+        Sorry, your browser does not support Canvas
+    </canvas>
+    <img id="gradient1" src="fractalGradients/gradient1.png"/>
+    <img id="gradient2" src="fractalGradients/gradient2.png"/>
+    <img id="gradient3" src="fractalGradients/gradient3.png"/>
+    <hr>
+    <button id="zoomin">Zoom in</button>
+    <button id="zoomout">Zoom out</button>
+</body>
+</html> 
